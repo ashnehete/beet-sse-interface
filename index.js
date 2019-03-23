@@ -1,8 +1,15 @@
 const kafkaSse = require('kafka-sse');
 const server = require('http').createServer();
- 
+
+function customDeserializer(kafkaMessage) {
+    let value = kafkaMessage.value.toString();
+    kafkaMessage.message = value.substring(1, value.length - 1)
+    return kafkaMessage
+}
+
 const options = {
-    kafkaConfig: {'metadata.broker.list': 'localhost:9092'}
+    kafkaConfig: {'metadata.broker.list': 'localhost:9092'},
+    deserializer: customDeserializer
 }
  
 server.on('request', (req, res) => {
